@@ -5,6 +5,7 @@
  */
 package swing;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utils.Utils;
@@ -60,11 +62,16 @@ public class GUIEditSubs extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jScrollPane = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
-        btnChange = new javax.swing.JButton();
+        btnChangePlus = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jOpenFilePath = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
+        edCountStr = new javax.swing.JFormattedTextField();
+        edCountSubs = new javax.swing.JFormattedTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        btnChangeMinus = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -73,10 +80,6 @@ public class GUIEditSubs extends javax.swing.JFrame {
         editMin = new javax.swing.JFormattedTextField();
         editSec = new javax.swing.JFormattedTextField();
         editMs = new javax.swing.JFormattedTextField();
-        edCountStr = new javax.swing.JFormattedTextField();
-        edCountSubs = new javax.swing.JFormattedTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuOpenFile = new javax.swing.JMenuItem();
@@ -155,12 +158,13 @@ public class GUIEditSubs extends javax.swing.JFrame {
         jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         jScrollPane.setViewportView(jList1);
 
-        btnChange.setText("Изменить");
-        btnChange.setEnabled(false);
-        btnChange.setPreferredSize(new java.awt.Dimension(105, 35));
-        btnChange.addActionListener(new java.awt.event.ActionListener() {
+        btnChangePlus.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        btnChangePlus.setText("+");
+        btnChangePlus.setEnabled(false);
+        btnChangePlus.setPreferredSize(new java.awt.Dimension(105, 35));
+        btnChangePlus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changeTimes(evt);
+                btnChangePlusActionPerformed(evt);
             }
         });
 
@@ -183,12 +187,49 @@ public class GUIEditSubs extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jOpenFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setLayout(new java.awt.BorderLayout());
+
+        edCountStr.setEditable(false);
+        edCountStr.setColumns(2);
+        edCountStr.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("mm"))));
+        edCountStr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        edCountStr.setText("00");
+        edCountStr.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        edCountStr.setPreferredSize(null);
+
+        edCountSubs.setEditable(false);
+        edCountSubs.setColumns(2);
+        edCountSubs.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        edCountSubs.setText("00");
+        edCountSubs.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        edCountSubs.setMaximumSize(null);
+        edCountSubs.setMinimumSize(null);
+        edCountSubs.setName(""); // NOI18N
+        edCountSubs.setPreferredSize(null);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Subs");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("Strings");
+        jLabel6.setPreferredSize(new java.awt.Dimension(21, 20));
+
+        btnChangeMinus.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        btnChangeMinus.setText("-");
+        btnChangeMinus.setEnabled(false);
+        btnChangeMinus.setPreferredSize(new java.awt.Dimension(105, 35));
+        btnChangeMinus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChangeMinuschangeTimes(evt);
+            }
+        });
 
         jPanel3.setLayout(new java.awt.GridLayout(1, 0));
 
@@ -204,52 +245,43 @@ public class GUIEditSubs extends javax.swing.JFrame {
         jLabel4.setText("ms");
         jPanel3.add(jLabel4);
 
-        jPanel2.add(jPanel3, java.awt.BorderLayout.CENTER);
-
         jPanel4.setLayout(new java.awt.GridLayout(1, 0));
 
         editMin.setColumns(2);
-        editMin.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("mm"))));
+        editMin.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         editMin.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        editMin.setText("01");
+        editMin.setText("00");
         editMin.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        editMin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                editMinKeyPressed(evt);
+            }
+        });
         jPanel4.add(editMin);
 
         editSec.setColumns(2);
+        editSec.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         editSec.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        editSec.setText("10");
+        editSec.setText("01");
         editSec.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        editSec.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                editSecKeyPressed(evt);
+            }
+        });
         jPanel4.add(editSec);
 
         editMs.setColumns(4);
+        editMs.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         editMs.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        editMs.setText("100");
+        editMs.setText("0");
         editMs.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        editMs.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                editMsKeyPressed(evt);
+            }
+        });
         jPanel4.add(editMs);
-
-        jPanel2.add(jPanel4, java.awt.BorderLayout.PAGE_START);
-
-        edCountStr.setEditable(false);
-        edCountStr.setColumns(2);
-        edCountStr.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("mm"))));
-        edCountStr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        edCountStr.setText("00");
-        edCountStr.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-
-        edCountSubs.setEditable(false);
-        edCountSubs.setColumns(2);
-        edCountSubs.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        edCountSubs.setText("00");
-        edCountSubs.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Subs");
-
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("Strings");
-        jLabel6.setPreferredSize(new java.awt.Dimension(21, 20));
 
         jMenu1.setText("File");
 
@@ -325,26 +357,32 @@ public class GUIEditSubs extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(edCountStr, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(edCountSubs, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 592, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 6, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(btnChangePlus, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnChangeMinus, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(edCountStr, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(28, 28, 28)
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(edCountSubs, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 592, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -353,17 +391,29 @@ public class GUIEditSubs extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(edCountStr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(edCountSubs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(edCountStr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(edCountSubs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(21, 21, 21))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(btnChangeMinus, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnChangePlus, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -379,7 +429,8 @@ public class GUIEditSubs extends javax.swing.JFrame {
         menuSaveFileAs.setEnabled(false);
         menuSaveFile.setEnabled(false);
         menuCloseFile.setEnabled(false);
-        btnChange.setEnabled(false);
+        btnChangePlus.setEnabled(false);
+        btnChangeMinus.setEnabled(false);
         edCountStr.setText("00");
         edCountSubs.setText("00");
 
@@ -391,7 +442,8 @@ public class GUIEditSubs extends javax.swing.JFrame {
         menuSaveFileAs.setEnabled(true);
         menuOpenFile.setEnabled(false);
         menuCloseFile.setEnabled(true);
-        btnChange.setEnabled(true);
+        btnChangePlus.setEnabled(true);
+        btnChangeMinus.setEnabled(true);
 
     }//GEN-LAST:event_menuOpenFileActionPerformed
 
@@ -409,12 +461,6 @@ public class GUIEditSubs extends javax.swing.JFrame {
         winAbout.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void changeTimes(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeTimes
-        // TODO add your handling code here:
-        changeTime(editMin.getText(), editSec.getText(), editMs.getText());
-        menuSaveFile.setEnabled(true);
-    }//GEN-LAST:event_changeTimes
-
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem7ActionPerformed
@@ -428,6 +474,35 @@ public class GUIEditSubs extends javax.swing.JFrame {
         // TODO add your handling code here:
         saveFile(openFile);
     }//GEN-LAST:event_actionSaveFile
+
+    private void editMsKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_editMsKeyPressed
+        // TODO add your handling code here:
+                checkNumFormat(evt);
+    }//GEN-LAST:event_editMsKeyPressed
+
+    private void editSecKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_editSecKeyPressed
+        // TODO add your handling code here:
+                checkNumFormat(evt);
+    }//GEN-LAST:event_editSecKeyPressed
+
+    private void editMinKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_editMinKeyPressed
+        // TODO add your handling code here:
+
+        checkNumFormat(evt);
+
+    }//GEN-LAST:event_editMinKeyPressed
+
+    private void btnChangeMinuschangeTimes(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeMinuschangeTimes
+        // TODO add your handling code here:
+        changeTime(editMin.getText(), editSec.getText(), editMs.getText(),-1);
+        menuSaveFile.setEnabled(true);
+    }//GEN-LAST:event_btnChangeMinuschangeTimes
+
+    private void btnChangePlusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePlusActionPerformed
+        // TODO add your handling code here:
+        changeTime(editMin.getText(), editSec.getText(), editMs.getText(),1);
+        menuSaveFile.setEnabled(true);
+    }//GEN-LAST:event_btnChangePlusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -470,7 +545,8 @@ public class GUIEditSubs extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnChange;
+    private javax.swing.JButton btnChangeMinus;
+    private javax.swing.JButton btnChangePlus;
     private javax.swing.JFormattedTextField edCountStr;
     private javax.swing.JFormattedTextField edCountSubs;
     private javax.swing.JFormattedTextField editMin;
@@ -507,6 +583,15 @@ public class GUIEditSubs extends javax.swing.JFrame {
     private javax.swing.JDialog winAbout;
     // End of variables declaration//GEN-END:variables
 
+    
+    private void checkNumFormat(java.awt.event.KeyEvent evt) {
+        int k = evt.getKeyCode();                                    
+        if (k<48 || k>58) {                                    
+            evt.setKeyCode(KeyEvent.VK_BACK_SPACE);
+            JOptionPane.showMessageDialog(this, "Enter number 0..60");
+        }               
+    }
+    
     // Загрузка файла субтитров
     private boolean loadFile() {
         int countSubs = 0;
@@ -624,7 +709,7 @@ public class GUIEditSubs extends javax.swing.JFrame {
         return -1;
     }
 
-    private void changeTime(String sMin, String sSec, String sMs) {
+    private void changeTime(String sMin, String sSec, String sMs, int direction) {
         //int i=jList1.getSelectedIndex() - (jList1.getSelectedIndex() % 3);
         int i = 0;
 
@@ -656,10 +741,12 @@ public class GUIEditSubs extends javax.swing.JFrame {
                     if (ss[0].length() == 12 && ss[1].length() == 12) {
                         time1 = Utils.getTime(ss[0]);
                         //jDebug2.setText(""+time1);
-                        time1 += changeTime;
+                        time1 += changeTime*direction;
+                        if (time1<0) time1=0;
                         time2 = Utils.getTime(ss[1]);
                         //jDebug3.setText(""+time2);
-                        time2 += changeTime;
+                        time2 += changeTime*direction;
+                        if (time2<0) time2=0;
                         sTime1 = Utils.getTime(time1);
                         sTime2 = Utils.getTime(time2);
                         //jDebug4.setText(sTime1);            
@@ -671,7 +758,7 @@ public class GUIEditSubs extends javax.swing.JFrame {
                 }
             }
             JOptionPane.showMessageDialog(this, countChange + " subtitles was changed!");
-            jList1.updateUI();
+            //jList1.updateUI();
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
